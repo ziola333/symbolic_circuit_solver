@@ -9,7 +9,11 @@
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
-
+*.results
+*.png
+*.sp
+*.pyc
+*.log
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/
