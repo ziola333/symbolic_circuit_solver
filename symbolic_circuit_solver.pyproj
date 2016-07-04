@@ -44,6 +44,7 @@
     <Compile Include="scs_parser.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="symbolic_circuit_solver.py" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -29,6 +29,7 @@ import scs_parser
 
 __description__ = """
     Symbolic circuit solver - solves circuit from a netlist file with similar to spice syntax
+
 """
 
 def main():
