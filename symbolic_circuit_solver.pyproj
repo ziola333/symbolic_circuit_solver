@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>697f31e7-f859-45f1-a123-151034eab8f7</ProjectGuid>
+    <ProjectGuid>c85e10c3-4fa7-45be-9eac-3019c75546eb</ProjectGuid>
     <ProjectHome>.</ProjectHome>
     <StartupFile>symbolic_circuit_solver.py</StartupFile>
     <SearchPath>
@@ -23,27 +23,13 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="scs.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="scs_analysis.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="scs_circuit.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="scs_elements.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="scs_errors.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="scs_instance_hier.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="scs_parser.py">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="scs.py" />
+    <Compile Include="scs_analysis.py" />
+    <Compile Include="scs_circuit.py" />
+    <Compile Include="scs_elements.py" />
+    <Compile Include="scs_errors.py" />
+    <Compile Include="scs_instance_hier.py" />
+    <Compile Include="scs_parser.py" />
     <Compile Include="symbolic_circuit_solver.py" />
   </ItemGroup>
   <PropertyGroup>
