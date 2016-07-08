@@ -11,7 +11,7 @@
 *.userprefs
 *.results
 *.png
-*.sp
+test.sp
 *.pyc
 *.log
 # Build results
