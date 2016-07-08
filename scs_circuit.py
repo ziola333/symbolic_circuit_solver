@@ -14,6 +14,8 @@ __status__ = "development"
 import scs_errors
 import scs_analysis
 
+import time
+import logging
 class Circuit(object):
     """Hold objects with descriptions to make instances of circuits. It's kind of a template of a circiuit.
        Need's to be instatciete with other functions. Hold elements, own parameters, can hold other subcircuits, 
@@ -94,14 +96,17 @@ class TopCircuit(Circuit):
         created_print_file = False
 
         for analysis in self.analysisl:
-            if analysis.type == 'print' and not created_print_file:
-                print
+            time1 = time.clock()    
+            if not created_print_file:
                 with open(print_filename,'w') as f:
-                    f.write("RESULTS\n")
-                    f.write("=====================\n")
                     created_print_file = True
-            scs_analysis.analysis_dict[analysis.type](analysis.paramsd,analysis.paramsl,instance,file_prefix)
-            
+            try:
+                scs_analysis.analysis_dict[analysis.type](analysis.paramsd,analysis.paramsl,instance,file_prefix)
+                logging.info("Analysis: .%s '%s' performed in: %f s" % (analysis.type,analysis.paramsl[0],time.clock()-time1))
+            except:
+                logging.warning("Analysis: %s %s not performed" % (analysis.type,analysis.paramsl[0]))
+                
+                #TODO: add exception handling here
 
 class Element(object):
     """Element object, which are being hold in circuits dictionaries

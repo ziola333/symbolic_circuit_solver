@@ -74,7 +74,8 @@ class Instance(object):
         """
         for net in element.nets:
             if net in self.elements_on_net:
-                self.elements_on_net[net].append(element)
+                if element not in self.elements_on_net[net]:
+                    self.elements_on_net[net].append(element)
             else:
                 self.elements_on_net.update({net:[element]})
         self.elements.update({element.names[0]:element})
@@ -88,7 +89,8 @@ class Instance(object):
         """
         for _,net in sub_inst.port_map.iteritems():
             if net in self.elements_on_net:
-                self.elements_on_net[net].append(sub_inst)
+                if sub_inst not in self.elements_on_net[net]:
+                    self.elements_on_net[net].append(sub_inst)
             else:
                 self.elements_on_net.update({net:[sub_inst]})
         self.subinstances.update({sub_inst.name:sub_inst})
@@ -297,11 +299,11 @@ class Instance(object):
             if element is ignore_element: continue             
             if isinstance(element,scs_elements.VoltageSource) and (net in element.nets[:2]):
                 if (not element in self.used_voltage_sources):
-                    if element.nets[0] in self.net_name_index:G_v[self.net_name_index[element.nets[0]]] = 1
-                    if element.nets[1] in self.net_name_index: G_v[self.net_name_index[element.nets[1]]] = -1  
+                    if element.nets[0] in self.net_name_index:G_v[self.net_name_index[element.nets[0]]] += 1
+                    if element.nets[1] in self.net_name_index: G_v[self.net_name_index[element.nets[1]]] += -1  
                     if isinstance(element,scs_elements.VoltageControlledVoltageSource):
-                        if element.nets[2] in self.net_name_index: G_v[self.net_name_index[element.nets[2]]] = element.values[0]
-                        if element.nets[3] in self.net_name_index: G_v[self.net_name_index[element.nets[3]]] = -element.values[0]
+                        if element.nets[2] in self.net_name_index: G_v[self.net_name_index[element.nets[2]]] += -element.values[0]
+                        if element.nets[3] in self.net_name_index: G_v[self.net_name_index[element.nets[3]]] += +element.values[0]
                     elif isinstance(element,scs_elements.CurrentControlledVoltageSource): 
                         if element.names[1] not in self.elements:
                             raise "No such element %s referenced by %s" % (element.names[1],element.names[0])           
@@ -392,8 +394,9 @@ class Instance(object):
             if not self.update_eq_with_vs(net,G_v,I):
                 for element in self.elements_on_net[net]:
                     self.update_current_v(element,net,G_v,I)
-            G_m.append(G_v)
-            I_v.append(I)
+            #G_m.append(G_v)
+            G_m.append([sympy.cancel(tmp) for tmp in G_v])
+            I_v.append([sympy.cancel(tmp) for tmp in I])
             
         #Make and slice the Matrix G_M = [G_i | G_p]
         G_m = sympy.Matrix(G_m)
@@ -535,8 +538,8 @@ class Instance(object):
         G_v1m,G_v2m = sympy.Matrix(G_v1),sympy.Matrix(G_v2)
         
         if G_v1: 
-            G_pv = list(G_v1m*self.Ap_m+G_v2m.transpose())
-            I[0] += list(G_v1m*self.V0_m)[0]
+            G_pv = list(self.Ap_m.transpose()*G_v1m+G_v2m)
+            I[0] += list(G_v1m.transpose()*self.V0_m)[0]
         else: G_pv = list(G_v2m)
         
 
@@ -573,8 +576,8 @@ class Instance(object):
         G_v1m,G_v2m = sympy.Matrix(G_v1),sympy.Matrix(G_v2)
         
         if G_v1: 
-            G_pv = list(G_v1m*self.Ap_m+G_v2m.transpose())
-            I[0] += list(G_v1m*self.V0_m)[0]
+            G_pv = list(self.Ap_m.transpose()*G_v1m+G_v2m)
+            I[0] += list(G_v1m.transpose()*self.V0_m)[0]
         else: G_pv = list(G_v2m)
         
         #Translate vector into dictionary
@@ -617,7 +620,10 @@ class Instance(object):
                 if g:
                     I[0] += g*self.v(self.nets[i])
                 i += 1
-            return sympy.factor(I[0])
+            return I[0]
+            #return sympy.factor(I[0],sympy.symbols('s'))
+            #return I[0].simplify()
+            #return sympy.powsimp(I[0])
         else:        
             subinstance = self
             for subname in hier_port[:-2]:
@@ -642,9 +648,11 @@ class Instance(object):
                 i = 0
                 for g in G_v:
                     if g:
-                        I[0] += g*self.v(self.nets[i])
+                        I[0] -= g*self.v(self.nets[i])
                     i += 1
-                return sympy.factor(I[0])
+                #return sympy.factor(I[0],sympy.symbols('s'))
+                #return I[0].simplify()
+                return -I[0]
             else: 
                 raise scs_errors.ScsInstanceError("No such instance")
         else:
@@ -703,8 +711,10 @@ class Instance(object):
                 v.append(hier_instance.v(hier_net[-1]))
             else:
                 v.append(0)            
-        return sympy.factor(v[0]-v[1])
-                                            
+        #return sympy.factor(v[0]-v[1],sympy.symbols('s'))
+        #return (v[0]-v[1]).simplify()                                      
+        return v[0]-v[1]
+        #return sympy.cancel(v[0]-v[1])
 def _contract_chains(chains):
     """ Contracts chains in list into larger chains if are connected
 
@@ -836,7 +846,7 @@ def make_instance(parent,name,circuit,port_map={},passed_paramsd={}):
                     raise scs_errors.ScsInstanceError("Error: subcircuit port lenght: %d != instance port length: %d \n Instance %s of subcircuit %s in %s subcircuit"
                                            % (len(subcircuit.ports),len(subcir_portl),ename,subcir_name,name if name else 'top'))
                 try:                    
-                    eps = scs_parser.evaluate_passed_params(element.paramsd,inst)
+                    eps = scs_parser.evaluate_passed_params(element.paramsd,inst,{})
                 except scs_errors.ScsParameterError, e:
                     raise scs_errors.ScsInstanceError("Error evaluating parametrs for instance: %s in %s subcircuit. %s" % (subcir_name,circuit.name,e))                    
                 

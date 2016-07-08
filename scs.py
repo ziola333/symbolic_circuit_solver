@@ -25,7 +25,7 @@ import time
 import scs_instance_hier
 import scs_circuit
 import scs_parser
-
+import scs_errors
 
 __description__ = """
     Symbolic circuit solver - solves circuit from a netlist file with similar to spice syntax
@@ -93,7 +93,10 @@ def main():
     if not top_instance.check_voltage_loop(): exit()
     
     time1 = time.clock()
-    top_instance.solve()
+    try:
+        top_instance.solve()
+    except:
+        exit()
     logging.info('Solved circuit in: %f s' % (time.clock()-time1))
 
     top_cir.perform_analysis(top_instance,output_file_prefix)

@@ -102,7 +102,7 @@ def evaluate_param(param,paramsd,evaluated_paramsd,parent=None,params_called_lis
                             if token not in params_called_list:
                                 tmp = evaluate_param(token,paramsd,evaluated_paramsd,parent,params_called_list+[token])
                                 if tmp:
-                                    evaluated_paramsd.update({param:sympy.sympify(tmp)})                            
+                                    evaluated_paramsd.update({token:sympy.sympify(tmp)})                            
                             else:
                                 raise scs_errors.ScsParameterError("Circulary refence for %s" % token)
                         else:
@@ -258,11 +258,11 @@ def results2values(tokens,instance):
                 m = reg_only_function.search(token)
                 if m.group('function') == 'v':
                     arguments = m.group('argument').split(',')
-                    ret_str += str(instance.v(*tuple(arguments)))
+                    ret_str += '('+str(instance.v(*tuple(arguments)))+')'
                 elif m.group('function') == 'i':
-                    ret_str += str(instance.i(m.group('argument')))
+                    ret_str += '('+str(instance.i(m.group('argument')))+')'
                 elif m.group('function') == 'isub':
-                    ret_str += str(instance.isub(m.group('argument')))
+                    ret_str += '('+str(instance.isub(m.group('argument')))+')'
                 else:
                     raise scs_errors.ScsInstanceError("Can't find function: %s" % token)
             elif reg_only_symbol.match(token): #symbol token
