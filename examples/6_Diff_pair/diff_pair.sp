@@ -16,10 +16,10 @@ RLP outp 0 RL
 CLP outp 0 CL
 RLM outm 0 RL
 CLM outm 0 CL
-.print gain 'v(outp,outm)/v(inp,inm)'  s = 0 
-.print vout 'v(outp,outm)'
-.print vtail v(tail)
-.print T 'v(outp,outm)/v(inp,inm)'
-.plot T RL=1k CL=1n gds = 0.1m gm = 1m 
+.measure gain 'v(outp,outm)/v(inp,inm)'  s = 0 
+.measure vout 'v(outp,outm)'
+.measure vtail v(tail)
+.measure T 'v(outp,outm)/v(inp,inm)'
+.ac T RL=1k CL=1n gds = 0.1m gm = 1m 
 
 .ends

@@ -16,6 +16,6 @@ R2 p 0 R2
 XOTA p out out 0 opamp gain='1/A'
 
 
-.print T 'v(out)/Vin' rout=0 A=0
-.plot T R1 = 1 R2 =1 C1=220n C2 = 220n fstart = 1e-3 fstop=1e12
+.measure T 'v(out)/Vin' rout=0 A=0
+.ac T R1 = 1 R2 =1 C1=220n C2 = 220n fstart = 1e-3 fstop=1e12 show_legend = yes title = 'T'
 .ends

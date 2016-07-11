@@ -12,6 +12,6 @@ R2 x out R2
 XOTA in x out 0 opamp gain='1/A'
 RL out 0 RL
 
-.print gain 'v(out)/Vin' rout=0 A=0
+.measure gain 'v(out)/Vin' rout=0 A=0
 
 .ends

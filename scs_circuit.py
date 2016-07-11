@@ -91,19 +91,20 @@ class TopCircuit(Circuit):
     
             file_prefix: prefix of a file where analysis are gonna print their answers
         """
-        print_filename = "%s.results" % file_prefix
+        results_filename = "%s.results" % file_prefix
         
         created_print_file = False
 
         for analysis in self.analysisl:
             time1 = time.clock()    
             if not created_print_file:
-                with open(print_filename,'w') as f:
+                with open(results_filename,'w') as f:
                     created_print_file = True
             try:
                 scs_analysis.analysis_dict[analysis.type](analysis.paramsd,analysis.paramsl,instance,file_prefix)
                 logging.info("Analysis: .%s '%s' performed in: %f s" % (analysis.type,analysis.paramsl[0],time.clock()-time1))
-            except:
+            except (scs_errors.ScsInstanceError,scs_errors.ScsParameterError,scs_errors.ScsAnalysisError), e:
+                logging.warning(e)
                 logging.warning("Analysis: %s %s not performed" % (analysis.type,analysis.paramsl[0]))
                 
                 #TODO: add exception handling here

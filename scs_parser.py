@@ -46,15 +46,15 @@ reg_only_numeric_eng = re.compile('^(?P<number>\d+\.?\d*)?(?P<suffix>meg|Meg|MEg
 #Matches mathematical operators: *, **, +, -, / could be more charachters after
 reg_operator =re.compile('(?P<token>^((\*\*?)|\+|\-|\/))(.*)')
 #Matches alphanumeric name of parameter, could be more charachters after
-reg_symbols = re.compile('(?P<token>^[a-zA-Z]+\w*)(.*)')
+reg_symbols = re.compile('(?P<token>^[a-zA-Z]+[\w_\{\}]*)(.*)')
 #Matches alphanumeric name of parameter, no more charachters after
-reg_only_symbol = re.compile('(?P<symbol>^[a-zA-Z]+([a-zA-Z]|[0-9])*)$')
+reg_only_symbol = re.compile('(?P<symbol>^[a-zA-Z]+[\w_\{\}]*)$')
 #Matches the inside of beginig brackets like: (foo) bar 
 reg_brackets =re.compile('(^\((?P<token>.*)\))(.*)')
 #Matches funcion expresion, more characters could be after: foo(bar) spam spam spam
-reg_function = re.compile('(?P<token>^[a-zA-z]?[a-zA-Z0-9]\(.*?\))(.*)')
+reg_function = re.compile('(?P<token>^[a-zA-z]?[\w_\{\}]*?\(.*?\))(.*)')
 #Matches just function expresion: foo(bar)
-reg_only_function = re.compile('(?P<function>^[a-zA-z]?[a-zA-Z0-9]*)\((?P<argument>.*?)\)$')
+reg_only_function = re.compile('(?P<function>^[a-zA-z]?[\w_\{\}]*?)\((?P<argument>.*?)\)$')
 
 #Engineer sufixes for numbers
 suffixd = {'meg':1e6,'Meg':1e6,'MEg':1e6,'MEG':1e6,\
@@ -176,6 +176,7 @@ def parse_analysis_expresion(expresion):
         Function parses the expresion. Expresion should be mathematical construct. Could contain variable names, numbers and operators, round brackets and
         functions from the set of v(),i(),isub(). Function returns grammatical tokens for this expresion.
     """
+    expresion0 = expresion
     expresion.strip()
     tokens = []
     while expresion:
@@ -189,9 +190,12 @@ def parse_analysis_expresion(expresion):
         else:
             m = reg_brackets.search(expresion)
             if m:
-                tokens.append(parse_analysis_expresion(m.group('token'))) 
+                try:
+                    tokens.append(parse_analysis_expresion(m.group('token'))) 
+                except scs_errors.ScsParameterError:
+                    raise scs_errors.ScsParameterError("Can't parse expresion: %s" % expresion0)
         if not m:
-            raise scs_errors.ScsParameterError("Can't parse expresion: $s" % expresion)            
+            raise scs_errors.ScsParameterError("Can't parse expresion: %s" % expresion0)            
         else:
             expresion = m.group(m.lastindex) #rest of the expression
             
@@ -219,7 +223,7 @@ def parse_param_expresion(expresion):
             if m:
                 tokens.append(parse_param_expresion(m.group('token'))) 
         if not m:
-            raise scs_errors.ScsParameterError("Can't parse expresion: $s" % expresion)            
+            raise scs_errors.ScsParameterError("Can't parse expresion: %s" % expresion)            
         else:
             expresion = m.group(m.lastindex) #rest of the expression
             
@@ -498,8 +502,9 @@ def get_name_function_from_head(head):
     function_dict = {'param':add_param,
                      'include':include_file,
                      'subckt':add_subcircuit,
-                     'print':add_analysis,
-                     'plot':add_analysis,
+                     'measure':add_analysis,
+                     'ac':add_analysis,
+                     'dc':add_analysis,
                      'ends':change_to_parent_circuit}
     if head[0]=='.':
         if name in function_dict:

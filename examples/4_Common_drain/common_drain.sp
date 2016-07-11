@@ -13,9 +13,9 @@ RL  out 0 RL
 CL  out 0 CL
 
 
-.print gain 'v(out)/v(in)'  Iout = 0 s = 0
+.measure gain 'v(out)/v(in)'  Iout = 0 s = 0
 
-.plot 'v(out)/v(in)' gm = 1m Rd = 10 RL = 10k gds = 0.1m cgs = 1p CL = 1n Iout = 0 fstop=1e12
+.ac 'v(out)/v(in)' gm = 1m Rd = 10 RL = 10k gds = 0.1m cgs = 1p CL = 1n Iout = 0 fstop=1e12
 
 
 .ends

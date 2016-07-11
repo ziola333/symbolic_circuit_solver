@@ -407,7 +407,10 @@ class Instance(object):
         # G_i*V_i + G_p*V_p  = I_v
         # V_i = G_i^-1 I_v - G_i^-1 * G_p * V_p
         # V_i = Vo +Ap * vp
-        G_i_inv = G_i.inv() 
+        try:
+            G_i_inv = G_i.inv() 
+        except ValueError, e:
+            raise scs_errors.ScsElementError("%s is ill conditioned, and has no unique solution." % self.name if self.name else "TOP INSTANCE")
         self.V0_m = G_i_inv*I_v
         self.Ap_m = -G_i_inv*G_p
 
@@ -603,10 +606,10 @@ class Instance(object):
             subinstance_name = hier_port[-2]
             port_net = hier_port[-1]
             if subinstance_name not in self.subinstances: 
-                raise scs_errors.ScsInstanceError("No such instance")
+                raise scs_errors.ScsInstanceError("No %s subinstance in %s" %(subinstance_name,self.name if self.name else "TOP INSTANCE"))
             subinstance = self.subinstances[subinstance_name]
             if port_net not in subinstance.port_nets: 
-                raise scs_errors.ScsInstanceError("No such port")
+                raise scs_errors.ScsInstanceError("No port %s in subinstance %s of %s" %(port_net,subinstance.name,self.name if self.name else "TOP INSTANCE"))
             G_v =[0 for i in range(len(self.nets))]
             I = [0]
             G_d,I[0],other_ports = subinstance.port_current(port_net)
@@ -630,7 +633,7 @@ class Instance(object):
                 if subname in subinstance.subinstances:
                     subinstance = subinstance.subinstances[subname]
                 else:
-                    raise scs_errors.ScsInstanceError("No such instance")
+                    raise scs_errors.ScsInstanceError("No %s subinstance in %s" %(hier_name,self.name if self.name else "TOP INSTANCE"))
             return subinstance.isub('%s.%s' % (hier_inst[-2],hier_inst[-1]))
 
     def i(self,instance):
@@ -654,14 +657,14 @@ class Instance(object):
                 #return I[0].simplify()
                 return -I[0]
             else: 
-                raise scs_errors.ScsInstanceError("No such instance")
+                raise scs_errors.ScsInstanceError("Can't find element %s in %s" % (hier_inst[0],self.name if self.name else "TOP INSTANCE"))
         else:
             subinstance = self
             for subname in hier_inst[:-1]:
                 if subname in subinstance.subinstances:
                     subinstance = subinstance.subinstances[subname]
                 else: 
-                    raise scs_errors.ScsInstanceError("No such instance")
+                    raise scs_errors.ScsInstanceError("No %s subinstance in %s" %(hier_name,self.name if self.name else "TOP INSTANCE"))
             return subinstance.i(hier_inst[-1])
 
     def v(self,net1,net2=None):
@@ -688,7 +691,7 @@ class Instance(object):
                             ap = Ap[net]
                             if ap:
                                 if port not in self.Vp:
-                                    self.Vp.update({port:self.parent.v(self.port_map[port])})
+                                    self.Vp.update({port:self.parent.v(self.port_map[port])})                                        
                                 vx += ap*self.Vp[port]
                         self.V.update({net:vx})
                     elif net in self.port_nets:
@@ -699,7 +702,7 @@ class Instance(object):
                         if net == '0' and not self.parent:
                             self.V.update({'0':0})
                         else: 
-                            raise scs_errors.ScsInstanceError("No such net")
+                            raise scs_errors.ScsInstanceError("No net %s in %s" %(net,self.name if self.name else "TOP INSTANCE"))
                 v.append(self.V[net])        
             elif hier_net:
                 hier_instance = self    
@@ -707,7 +710,7 @@ class Instance(object):
                     if hier_name in hier_instance.subinstances:
                         hier_instance = hier_instance.subinstances[hier_name]
                     else:
-                        raise scs_errors.ScsInstanceError("No such net")
+                        raise scs_errors.ScsInstanceError("No %s subinstance in %s" %(hier_name,self.name if self.name else "TOP INSTANCE"))
                 v.append(hier_instance.v(hier_net[-1]))
             else:
                 v.append(0)            

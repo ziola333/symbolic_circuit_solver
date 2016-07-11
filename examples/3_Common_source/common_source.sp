@@ -12,8 +12,8 @@ Rs  s 0 Rs
 RL  out 0 RL
 CL  out 0 CL
 
-.print gain 'v(out)/v(in)'  Iout = 0 s = 0 
-.plot 'v(out)/v(in)' gm = 1m Rs = 10 RL = 10k gds = 0.1m cgs = 100p CL = 1n Iout = 0 fstop=1e10
+.measure gain 'v(out)/v(in)'  Iout = 0 s = 0 
+.ac 'v(out)/v(in)' gm = 1m Rs = 10 RL = 10k gds = 0.1m cgs = 100p CL = 1n Iout = 0 fstop=1e10
 
 
 .ends

@@ -15,6 +15,6 @@ xmpp out  bias 0      mos_s gds = 'gdsp' gm='gmp'  cgs='cgs'
 xmpm out  out  out    mos_s gds = 'gdsp' gm='gmp' cgs='cgs'
 
 CL out 0 CL
-.print T 'v(out)/v(inp,inm)'
-.plot T gmn=1m gmp=1m gdsp=0.1m gdsn=0.1m CL = 10n  cgs=1p fstop=1e12
+.measure T 'v(out)/v(inp,inm)'
+.ac T gmn=1m gmp=1m gdsp=0.1m gdsn=0.1m CL = 10n  cgs=1p fstop=1e12
 .ends

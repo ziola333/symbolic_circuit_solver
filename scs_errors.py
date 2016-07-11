@@ -28,3 +28,8 @@ class ScsElementError(BaseException):
     """ Error which occured in relation with elements.
     """
     None
+
+class ScsAnalysisError(BaseException):
+    """ Error which occured in relation with elements.
+    """
+    None
