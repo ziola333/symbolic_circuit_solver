@@ -38,9 +38,9 @@ reg_unnamed_param = re.compile('(\'|\")(?P<value>.*)(\'|\")')
 #Matches a line with simple positional parameter like: spam spam spam foo
 reg_simple_param = re.compile('(?P<rest>.*)\s(?P<param>.*?$)')
 #Matches numeric values: 1, 1.01, 1e1, 1.0e+1, 1e-1 etc. could be more charachters after
-reg_numeric = re.compile('(?P<token>^\d+\.?(\d*)?((e|E)(\+|\-)?\d+)?)(.*)')
+reg_numeric = re.compile('(?P<token>^\d+\.?(\d*?)((e|E)(\+|\-)?\d+?)?)(.*)')
 #Matches engineer format numbers: 1k, 1.01n etc. could be more charachters after
-reg_numeric_eng = re.compile('(?P<token>^\d+\.?(\d*)?(meg|Meg|MEg|MEG|a|A|f|F|p|P|n|N|u|U|m|M|k|K|x|X|g|G|t|T))(.*)')
+reg_numeric_eng = re.compile('(?P<token>^\d+\.?(\d*?)(meg|Meg|MEg|MEG|a|A|f|F|p|P|n|N|u|U|m|M|k|K|x|X|g|G|t|T))(.*)')
 #Matches engineer format numbers: 1k, 1.01n etc. no more charachters after
 reg_only_numeric_eng = re.compile('^(?P<number>\d+\.?\d*)?(?P<suffix>meg|Meg|MEg|MEG|a|A|f|F|p|P|n|N|u|U|m|M|k|K|x|X|g|G|t|T)$')
 #Matches mathematical operators: *, **, +, -, / could be more charachters after
@@ -165,7 +165,7 @@ def evaluate_passed_params(paramsd,inst,evaluated_paramsd = {}):
             if tmp:
                 evaluated_paramsd.update({param:sympy.sympify(tmp)})
             elif inst.parent:
-                evaluate_passed_params({param:paramd},inst.parent,evaluated_paramsd)
+                evaluate_passed_params({param:paramsd},inst.parent,evaluated_paramsd)
     return evaluated_paramsd
 
 def parse_analysis_expresion(expresion):
