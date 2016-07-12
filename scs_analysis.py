@@ -354,7 +354,7 @@ def ac_analysis(param_d,param_l,instance,file_sufix):
                     if zero_value_f > float(config['fstop']) or zero_value_f < float(config['fstart'])  or np.isnan(Z(zero_value_f)): continue
                     if config['show_zeros'] == 'yes':
                         zero_label = r'$\omega_{z%d} $' %(z-1)
-                        plt.plot(zero_value_f,Z(zero_value_f),'*',label)
+                        plt.plot(zero_value_f,Z(zero_value_f),'*',label=zero_label)
                         plt.axvline(zero_value_f, linestyle='dashed')
                         plt.text(zero_value_f, Z(zero_value_f),zero_label)
                 except: None
