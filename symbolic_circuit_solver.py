@@ -8,7 +8,7 @@ stderrLogger=logging.StreamHandler()
 logging.getLogger().addHandler(stderrLogger)
 
 #print parse_param_expresion('3.1+(2+x)+1k**20e-1')
-top_cir = scs_parser.parseFile('test.sp',scs_circuit.TopCircuit())
+top_cir = scs_parser.parse_file('test.sp', scs_circuit.TopCircuit())
 #print evaluate_params(top_cir.parametersd)
 top_instance = scs_instance_hier.make_top_instance(top_cir)
 #top_instance.check_path_to_gnd()

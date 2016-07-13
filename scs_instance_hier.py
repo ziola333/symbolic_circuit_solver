@@ -436,7 +436,7 @@ class Instance(object):
         for element in self.elements_on_net[net]:
             if not element is refelement:
                 if isinstance(element,scs_elements.VoltageSource):
-                    elements_nets = adjoint_elements(element,element.nets[0] if element.nets[1] == net else element.nets[1])
+                    elements_nets = self.adjoint_elements(element,element.nets[0] if element.nets[1] == net else element.nets[1])
                 else: elements_nets.append((element,element.nets[1] if element.nets[0] == net else element.nets[0]))
         return elements_nets
            

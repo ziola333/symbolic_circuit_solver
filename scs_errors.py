@@ -9,27 +9,32 @@ __version__ = "0.0.1"
 __email__ = "kniola.tomasz@gmail.com"
 __status__ = "development"
 
+
 class ScsParserError(BaseException):
     """ Error which occured during parsing a file or a expresion.
     """
-    None
+    pass
+
 
 class ScsInstanceError(BaseException):
     """ Error which occured during instantiating or solving a circuit.
     """
-    None
+    pass
+
 
 class ScsParameterError(BaseException):
     """ Error which occured in relation with parameters.
     """
-    None
+    pass
+
 
 class ScsElementError(BaseException):
     """ Error which occured in relation with elements.
     """
-    None
+    pass
 
 class ScsAnalysisError(BaseException):
     """ Error which occured in relation with elements.
     """
-    None
+    pass
+
