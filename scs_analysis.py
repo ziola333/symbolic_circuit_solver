@@ -2,6 +2,7 @@
     Module holding functions for performing analysis on solved instances of circuits.
 """
 import sympy
+import sympy.abc
 import warnings
 import numpy as np
 import matplotlib.pyplot as plt
@@ -53,7 +54,7 @@ def measure_analysis(param_d, param_l, instance, file_sufix):
 
     for expresion in param_l[1:]:
         tokens = scs_parser.parse_analysis_expresion(expresion)
-        value = sympy.factor(sympy.sympify(scs_parser.results2values(tokens, instance)), sympy.symbols('s'))
+        value = sympy.factor(sympy.sympify(scs_parser.results2values(tokens, instance),sympy.abc._clash), sympy.symbols('s'))
         # value =  sympy.sympify(scs_parser.results2values(tokens,instance)).simplify()
         value = value.subs(subst).simplify()
         instance.paramsd.update({print_name: value})
@@ -129,7 +130,7 @@ def dc_analysis(param_d, param_l, instance, file_sufix):
     for symbol, value in param_d.iteritems():
         tokens = scs_parser.parse_param_expresion(value)
         try:
-            value = float(sympy.sympify(scs_parser.params2values(tokens, instance.paramsd)))
+            value = float(sympy.sympify(scs_parser.params2values(tokens, instance.paramsd),sympy.abc._clash))
         except ValueError:
             raise scs_errors.ScsAnalysisError("Passed subsitution for %s is not a number")
         subst.append((symbol, value))
@@ -155,7 +156,7 @@ def dc_analysis(param_d, param_l, instance, file_sufix):
 
     for expresion in param_l:
         tokens = scs_parser.parse_analysis_expresion(expresion)
-        value0 = sympy.sympify(scs_parser.results2values(tokens, instance)).subs(s, 0).simplify()
+        value0 = sympy.sympify(scs_parser.results2values(tokens, instance),sympy.abc._clash).subs(s, 0).simplify()
         value = value0.subs(subst)
         yf = sympy.lambdify(xsym, value)
         try:
@@ -235,7 +236,7 @@ def ac_analysis(param_d, param_l, instance, file_sufix):
     for symbol, value in param_d.iteritems():
         tokens = scs_parser.parse_param_expresion(value)
         try:
-            value = float(sympy.sympify(scs_parser.params2values(tokens, instance.paramsd)))
+            value = float(sympy.sympify(scs_parser.params2values(tokens, instance.paramsd),sympy.abc._clash))
         except ValueError:
             raise scs_errors.ScsAnalysisError("Passed subsitution for %s is not a number")
 
@@ -261,7 +262,7 @@ def ac_analysis(param_d, param_l, instance, file_sufix):
         for expresion in param_l:
             fil.write("%s: %s \n---------------------\n" % ('AC analysis of', expresion))
             tokens = scs_parser.parse_analysis_expresion(expresion)
-            value0 = sympy.factor(sympy.sympify(scs_parser.results2values(tokens, instance)), s).simplify()
+            value0 = sympy.factor(sympy.sympify(scs_parser.results2values(tokens, instance),sympy.abc._clash), s).simplify()
             fil.write("%s = %s \n\n" % (expresion, str(value0)))
             denominator = sympy.denom(value0)
             numerator = sympy.numer(value0)

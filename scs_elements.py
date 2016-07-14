@@ -19,6 +19,7 @@ Those elements are part of instance not circuit.
 """
 
 import sympy
+import sympy.abc
 import scs_errors
 import scs_parser
 
@@ -75,7 +76,7 @@ class VoltageSource(Element):
         vvalue = scs_parser.evaluate_param('_v', {'_v': vvalue_expresion}, evaluated_paramsd, parent)
         self.names = [name]
         self.nets = element.paramsl[:-1]
-        self.values = [sympy.sympify(vvalue)]
+        self.values = [sympy.sympify(vvalue,sympy.abc._clash)]
 
 
 class VoltageControlledVoltageSource(VoltageSource):
@@ -100,7 +101,7 @@ class VoltageControlledVoltageSource(VoltageSource):
         gain_value = scs_parser.evaluate_param('_gain', {'_gain': gain_expresion}, evaluated_paramsd, parent)
         self.names = [name]
         self.nets = element.paramsl[:-1]
-        self.values = [sympy.sympify(gain_value)]
+        self.values = [sympy.sympify(gain_value,sympy.abc._clash)]
 
 
 class CurrentControlledVoltageSource(VoltageSource):
@@ -125,7 +126,7 @@ class CurrentControlledVoltageSource(VoltageSource):
         r_value = scs_parser.evaluate_param('_r', {'_r': r_expresion}, evaluated_paramsd, parent)
         self.names = [name, element.paramsl[-2]]
         self.nets = element.paramsl[:-2]
-        self.values = [sympy.sympify(r_value)]
+        self.values = [sympy.sympify(r_value,sympy.abc._clash)]
 
 
 class CurrentSource(Element):
@@ -154,7 +155,7 @@ class CurrentSource(Element):
         ivalue = scs_parser.evaluate_param('_i', {'_i': ivalue_expresion}, evaluated_paramsd, parent)
         self.names = [name]
         self.nets = element.paramsl[:-1]
-        self.values = [sympy.sympify(ivalue)]
+        self.values = [sympy.sympify(ivalue,sympy.abc._clash)]
 
 
 class VoltageControlledCurrentSource(CurrentSource):
@@ -179,7 +180,7 @@ class VoltageControlledCurrentSource(CurrentSource):
         gm_value = scs_parser.evaluate_param('_gm', {'_gm': gm_expresion}, evaluated_paramsd, parent)
         self.names = [name]
         self.nets = element.paramsl[:-1]
-        self.values = [sympy.sympify(gm_value)]
+        self.values = [sympy.sympify(gm_value,sympy.abc._clash)]
 
 
 class CurrentControlledCurrentSource(CurrentSource):
@@ -204,7 +205,7 @@ class CurrentControlledCurrentSource(CurrentSource):
         ai_value = scs_parser.evaluate_param('_ai', {'_ai': ai_expresion}, evaluated_paramsd, parent)
         self.names = [name, element.paramsl[-2]]
         self.nets = element.paramsl[:-2]
-        self.values = [sympy.sympify(ai_value)]
+        self.values = [sympy.sympify(ai_value,sympy.abc._clash)]
 
 
 class PassiveElement(Element):
@@ -241,7 +242,7 @@ class Resistance(PassiveElement):
         rvalue = scs_parser.evaluate_param('_r', {'_r': rvalue_expresion}, evaluated_paramsd, parent)
         self.names = [name]
         self.nets = element.paramsl[:-1]
-        self.values = [sympy.sympify(rvalue)]
+        self.values = [sympy.sympify(rvalue,sympy.abc._clash)]
 
     def conductance(self):
         """ Calculate the conductance of self
@@ -277,7 +278,7 @@ class Capacitance(PassiveElement):
         cvalue = scs_parser.evaluate_param('_c', {'_c': cvalue_expresion}, evaluated_paramsd, parent)
         self.names = [name]
         self.nets = element.paramsl[:-1]
-        self.values = [sympy.sympify(cvalue)]
+        self.values = [sympy.sympify(cvalue,sympy.abc._clash)]
 
     def conductance(self):
         """ Calculate the conductance of self
@@ -313,7 +314,7 @@ class Inductance(PassiveElement):
         lvalue = scs_parser.evaluate_param('_l', {'_l': lvalue_expresion}, evaluated_paramsd, parent)
         self.names = [name]
         self.nets = element.paramsl[:-1]
-        self.values = [sympy.sympify(lvalue)]
+        self.values = [sympy.sympify(lvalue,sympy.abc._clash)]
 
     def conductance(self):
         """ Calculate the conductance of self

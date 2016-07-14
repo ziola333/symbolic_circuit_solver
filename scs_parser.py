@@ -8,6 +8,7 @@ There are also function which deals with convering expresions for paramters and 
 """
 import re
 import sympy
+import sympy.abc
 import logging
 
 import scs_circuit
@@ -109,7 +110,7 @@ def evaluate_param(param, paramsd, evaluated_paramsd, parent=None, params_called
                                 tmp = evaluate_param(token, paramsd, evaluated_paramsd, parent,
                                                      params_called_list + [token])
                                 if tmp:
-                                    evaluated_paramsd.update({token: sympy.sympify(tmp)})
+                                    evaluated_paramsd.update({token: sympy.sympify(tmp,sympy.abc._clash)})
                             else:
                                 raise scs_errors.ScsParameterError("Circulary refence for %s" % token)
                         else:
@@ -156,7 +157,7 @@ def evaluate_params(paramsd, parent=None):
         if param not in evaluated_paramsd:
             tmp = evaluate_param(param, paramsd, evaluated_paramsd, parent, [param])
             if tmp:
-                evaluated_paramsd.update({param: sympy.sympify(tmp)})
+                evaluated_paramsd.update({param: sympy.sympify(tmp,sympy.abc._clash)})
     return evaluated_paramsd
 
 
@@ -180,7 +181,7 @@ def evaluate_passed_params(paramsd, inst, evaluated_paramsd=None):
         if param not in evaluated_paramsd:
             tmp = evaluate_expresion(param_str, inst.paramsd)
             if tmp:
-                evaluated_paramsd.update({param: sympy.sympify(tmp)})
+                evaluated_paramsd.update({param: sympy.sympify(tmp,sympy.abc._clash)})
             elif inst.parent:
                 evaluate_passed_params({param: paramsd}, inst.parent, evaluated_paramsd)
     return evaluated_paramsd
@@ -351,7 +352,7 @@ def evaluate_expresion(expresion, valuesd):
         Evaluate expresion into tokens and than change it to a single value or symbolic expresion
     """
     tokens = parse_param_expresion(expresion)
-    return sympy.sympify(params2values(tokens, valuesd))
+    return sympy.sympify(params2values(tokens, valuesd),sympy.abc._clash)
 
 
 def strip_comment(in_str):
